@@ -653,24 +653,40 @@
             const now = new Date();
             const dataHora = `DATA E HORA: ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}, ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
             
-            // Adicionar logo (se existir)
+            // Carregar logo
             const logo = new Image();
-            logo.src = 'img/dpa.png';
+            logo.crossOrigin = 'Anonymous';
+            let logoCarregada = false;
+            
             logo.onload = function() {
-                try {
-                    doc.addImage(logo, 'PNG', 80, 10, 50, 20);
-                } catch(e) {
-                    console.log('Logo não carregada');
-                }
+                logoCarregada = true;
                 finalizarPDF();
             };
             
-            // Timeout para gerar PDF mesmo se logo não carregar
-            setTimeout(function() {
+            logo.onerror = function() {
+                console.log('Erro ao carregar logo');
                 finalizarPDF();
-            }, 500);
+            };
+            
+            logo.src = 'img/dpa.png';
+            
+            // Timeout de segurança
+            setTimeout(function() {
+                if (!logoCarregada) {
+                    console.log('Timeout - gerando PDF sem logo');
+                    finalizarPDF();
+                }
+            }, 2000);
             
             function finalizarPDF() {
+                // Adicionar logo se foi carregada
+                if (logoCarregada) {
+                    try {
+                        doc.addImage(logo, 'PNG', 75, 8, 60, 22);
+                    } catch(e) {
+                        console.log('Erro ao adicionar logo ao PDF:', e);
+                    }
+                }
                 let y = 35;
                 
                 // Título principal
