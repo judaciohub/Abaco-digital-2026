@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contagem de Não Conformidades</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -619,29 +620,71 @@
                 return;
             }
 
-            const payload = {
-                counts: data,
-                responsible: responsavel
-            };
-
-            fetch('/generate-pdf', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            })
-            .then(response => response.json())
-            .then(result => {
-                alert(result.message);
-                if(result.status === 'success') {
-                    fecharModal();
+            // Gerar PDF com jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Configuração do documento
+            const now = new Date();
+            const dataHora = `${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR')}`;
+            
+            // Título
+            doc.setFontSize(18);
+            doc.setFont(undefined, 'bold');
+            doc.text('RELATORIO DE NAO CONFORMIDADES', 105, 20, { align: 'center' });
+            
+            // Data e Responsável
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Data/Hora: ${dataHora}`, 20, 35);
+            doc.text(`Responsavel: ${responsavel}`, 20, 45);
+            
+            // Linha separadora
+            doc.setLineWidth(0.5);
+            doc.line(20, 50, 190, 50);
+            
+            // Listar não conformidades
+            let y = 60;
+            let total = 0;
+            
+            doc.setFontSize(11);
+            data.forEach((item, index) => {
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
                 }
-            })
-            .catch(error => {
-                console.error('Erro ao gerar PDF:', error);
-                alert('Ocorreu um erro ao tentar gerar o relatório.');
+                
+                doc.setFont(undefined, 'normal');
+                doc.text(`${item.label}:`, 20, y);
+                doc.setFont(undefined, 'bold');
+                doc.text(String(item.value), 180, y);
+                
+                total += item.value;
+                y += 8;
             });
+            
+            // Total
+            y += 5;
+            if (y > 270) {
+                doc.addPage();
+                y = 20;
+            }
+            
+            doc.setLineWidth(0.5);
+            doc.line(20, y, 190, y);
+            y += 10;
+            
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('TOTAL DE NAO CONFORMIDADES:', 20, y);
+            doc.text(String(total), 180, y);
+            
+            // Salvar PDF
+            const nomeArquivo = `Relatorio_NC_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.pdf`;
+            doc.save(nomeArquivo);
+            
+            alert('Relatório PDF gerado com sucesso!');
+            fecharModal();
         }
 
         // Atualiza contador
