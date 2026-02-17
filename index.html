@@ -592,30 +592,55 @@
                 return;
             }
 
+            // Coletar dados organizados por categoria
+            const categorias = {
+                carcaca: { total: 0, items: [] },
+                pe: { total: 0, items: [] },
+                pernil: { total: 0, items: [] },
+                paleta: { total: 0, items: [] },
+                carre: { total: 0, items: [] },
+                barriga: { total: 0, items: [] }
+            };
+
             const counters = document.querySelectorAll('.counter-display');
-            const data = [];
+            let totalGeral = 0;
             
             counters.forEach(counter => {
                 const value = parseInt(counter.textContent);
                 if (value > 0) {
-                    const labelElement = counter.closest('.item').querySelector('.item-name');
-                    const sectionElement = counter.closest('.section').querySelector('.section-header');
-                    let label = '';
-
-                    if (sectionElement.textContent.includes('CARCAÇA') || sectionElement.textContent.includes('PÉ')) {
-                        label = sectionElement.textContent.trim();
-                    } else {
-                        label = `${sectionElement.textContent.trim()} - ${labelElement.textContent.trim()}`;
-                    }
+                    const id = counter.id;
                     
-                    data.push({
-                        label: label,
-                        value: value
-                    });
+                    if (id === 'carcaca') {
+                        categorias.carcaca.total = value;
+                        totalGeral += value;
+                    } else if (id === 'pe') {
+                        categorias.pe.total = value;
+                        totalGeral += value;
+                    } else if (id.startsWith('pernil-')) {
+                        const labelElement = counter.closest('.item').querySelector('.item-name');
+                        categorias.pernil.items.push({ label: labelElement.textContent.trim(), value: value });
+                        categorias.pernil.total += value;
+                        totalGeral += value;
+                    } else if (id.startsWith('paleta-')) {
+                        const labelElement = counter.closest('.item').querySelector('.item-name');
+                        categorias.paleta.items.push({ label: labelElement.textContent.trim(), value: value });
+                        categorias.paleta.total += value;
+                        totalGeral += value;
+                    } else if (id.startsWith('carre-')) {
+                        const labelElement = counter.closest('.item').querySelector('.item-name');
+                        categorias.carre.items.push({ label: labelElement.textContent.trim(), value: value });
+                        categorias.carre.total += value;
+                        totalGeral += value;
+                    } else if (id.startsWith('barriga-')) {
+                        const labelElement = counter.closest('.item').querySelector('.item-name');
+                        categorias.barriga.items.push({ label: labelElement.textContent.trim(), value: value });
+                        categorias.barriga.total += value;
+                        totalGeral += value;
+                    }
                 }
             });
 
-            if (data.length === 0) {
+            if (totalGeral === 0) {
                 alert('Nenhuma não conformidade registrada para gerar o relatório.');
                 return;
             }
@@ -626,65 +651,160 @@
             
             // Configuração do documento
             const now = new Date();
-            const dataHora = `${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR')}`;
+            const dataHora = `DATA E HORA: ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}, ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
             
-            // Título
-            doc.setFontSize(18);
-            doc.setFont(undefined, 'bold');
-            doc.text('RELATORIO DE NAO CONFORMIDADES', 105, 20, { align: 'center' });
+            // Adicionar logo (se existir)
+            const logo = new Image();
+            logo.src = 'img/dpa.png';
+            logo.onload = function() {
+                try {
+                    doc.addImage(logo, 'PNG', 80, 10, 50, 20);
+                } catch(e) {
+                    console.log('Logo não carregada');
+                }
+                finalizarPDF();
+            };
             
-            // Data e Responsável
-            doc.setFontSize(12);
-            doc.setFont(undefined, 'normal');
-            doc.text(`Data/Hora: ${dataHora}`, 20, 35);
-            doc.text(`Responsavel: ${responsavel}`, 20, 45);
+            // Timeout para gerar PDF mesmo se logo não carregar
+            setTimeout(function() {
+                finalizarPDF();
+            }, 500);
             
-            // Linha separadora
-            doc.setLineWidth(0.5);
-            doc.line(20, 50, 190, 50);
-            
-            // Listar não conformidades
-            let y = 60;
-            let total = 0;
-            
-            doc.setFontSize(11);
-            data.forEach((item, index) => {
-                if (y > 270) {
-                    doc.addPage();
-                    y = 20;
+            function finalizarPDF() {
+                let y = 35;
+                
+                // Título principal
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text('ABACO DOMPORQUITO S/A', 105, y, { align: 'center' });
+                
+                y += 7;
+                doc.text('RELATORIO DE CONTAGEM', 105, y, { align: 'center' });
+                
+                // Data e hora (alinhada à direita)
+                y += 10;
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'normal');
+                doc.text(dataHora, 200, y, { align: 'right' });
+                
+                y += 10;
+                
+                // CONTAGEM:
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'bold');
+                doc.text('CONTAGEM:', 15, y);
+                
+                y += 10;
+                
+                // Layout em duas colunas
+                const colEsquerda = 15;
+                const colDireita = 110;
+                let yEsq = y;
+                let yDir = y;
+                
+                doc.setFontSize(10);
+                
+                // COLUNA ESQUERDA
+                // CARCAÇA NÃO CONFORME
+                if (categorias.carcaca.total > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`CARCACA NAO CONFORME (TOTAL: ${categorias.carcaca.total})`, colEsquerda, yEsq);
+                    yEsq += 7;
                 }
                 
-                doc.setFont(undefined, 'normal');
-                doc.text(`${item.label}:`, 20, y);
-                doc.setFont(undefined, 'bold');
-                doc.text(String(item.value), 180, y);
+                // PERNIL
+                if (categorias.pernil.total > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`PERNIL (TOTAL: ${categorias.pernil.total})`, colEsquerda, yEsq);
+                    yEsq += 6;
+                    
+                    doc.setFont(undefined, 'normal');
+                    categorias.pernil.items.forEach(item => {
+                        doc.text(`${item.label}: ${item.value}`, colEsquerda + 5, yEsq);
+                        yEsq += 5;
+                    });
+                    yEsq += 3;
+                }
                 
-                total += item.value;
+                // CARRÉ
+                if (categorias.carre.total > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`CARRE (TOTAL: ${categorias.carre.total})`, colEsquerda, yEsq);
+                    yEsq += 6;
+                    
+                    doc.setFont(undefined, 'normal');
+                    categorias.carre.items.forEach(item => {
+                        doc.text(`${item.label}: ${item.value}`, colEsquerda + 5, yEsq);
+                        yEsq += 5;
+                    });
+                    yEsq += 3;
+                }
+                
+                // COLUNA DIREITA
+                // PÉ NÃO CONFORME
+                if (categorias.pe.total > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`PE NAO CONFORME (TOTAL: ${categorias.pe.total})`, colDireita, yDir);
+                    yDir += 7;
+                }
+                
+                // PALETA
+                if (categorias.paleta.total > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`PALETA (TOTAL: ${categorias.paleta.total})`, colDireita, yDir);
+                    yDir += 6;
+                    
+                    doc.setFont(undefined, 'normal');
+                    categorias.paleta.items.forEach(item => {
+                        doc.text(`${item.label}: ${item.value}`, colDireita + 5, yDir);
+                        yDir += 5;
+                    });
+                    yDir += 3;
+                }
+                
+                // BARRIGA
+                if (categorias.barriga.total > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`BARRIGA (TOTAL: ${categorias.barriga.total})`, colDireita, yDir);
+                    yDir += 6;
+                    
+                    doc.setFont(undefined, 'normal');
+                    categorias.barriga.items.forEach(item => {
+                        doc.text(`${item.label}: ${item.value}`, colDireita + 5, yDir);
+                        yDir += 5;
+                    });
+                    yDir += 3;
+                }
+                
+                // Usar a maior altura das duas colunas
+                y = Math.max(yEsq, yDir);
+                y += 10;
+                
+                // TOTAL GERAL
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text(`TOTAL GERAL: ${totalGeral} ITENS`, 105, y, { align: 'center' });
+                
+                y += 15;
+                
+                // Linha separadora
+                doc.setLineWidth(0.5);
+                doc.line(60, y, 150, y);
+                
                 y += 8;
-            });
-            
-            // Total
-            y += 5;
-            if (y > 270) {
-                doc.addPage();
-                y = 20;
+                
+                // Nome do responsável
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'normal');
+                doc.text(responsavel, 105, y, { align: 'center' });
+                
+                // Salvar PDF
+                const nomeArquivo = `Relatorio_Contagem_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.pdf`;
+                doc.save(nomeArquivo);
+                
+                alert('Relatório PDF gerado com sucesso!');
+                fecharModal();
             }
-            
-            doc.setLineWidth(0.5);
-            doc.line(20, y, 190, y);
-            y += 10;
-            
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text('TOTAL DE NAO CONFORMIDADES:', 20, y);
-            doc.text(String(total), 180, y);
-            
-            // Salvar PDF
-            const nomeArquivo = `Relatorio_NC_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.pdf`;
-            doc.save(nomeArquivo);
-            
-            alert('Relatório PDF gerado com sucesso!');
-            fecharModal();
         }
 
         // Atualiza contador
