@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagem de Não Conformidades</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .finalizar-btn {
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s;
+        }
+
+        .finalizar-btn:hover {
+            background: #229954;
+        }
+
+        .top-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-header {
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .amarelo { background: #f39c12; }
+        .cinza { background: #546e7a; }
+        .azul { background: #3498db; }
+        .laranja { background: #e67e22; }
+        .verde { background: #27ae60; }
+        .amarelo-claro { background: #f1c40f; }
+
+        .item {
+            background: #95a5a6;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .item-name {
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            flex: 1;
+        }
+
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .counter-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .counter-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-minus {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-plus {
+            background: #27ae60;
+            color: white;
+        }
+
+        .counter-display {
+            background: white;
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 8px 20px;
+            border-radius: 8px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid, .top-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .modal-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-close {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-reset {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="finalizar-btn" onclick="finalizarContagem()">Finalizar Contagem</button>
+
+        <div class="top-section">
+            <div class="section">
+                <div class="section-header amarelo">CARCAÇA NÃO CONFORME</div>
+                <div class="item">
+                    <span class="item-name">Total</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carcaca', -1)">−</button>
+                        <div class="counter-display" id="carcaca">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carcaca', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header cinza">PÉ NÃO CONFORME</div>
+                <div class="item">
+                    <span class="item-name">Total</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('pe', -1)">−</button>
+                        <div class="counter-display" id="pe">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('pe', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- PERNIL -->
+            <div class="section">
+                <div class="section-header azul">PERNIL</div>
+                <div class="item">
+                    <span class="item-name">DANIFICADO</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('pernil-danificado', -1)">−</button>
+                        <div class="counter-display" id="pernil-danificado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('pernil-danificado', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">FRATURA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('pernil-fratura', -1)">−</button>
+                        <div class="counter-display" id="pernil-fratura">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('pernil-fratura', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">RESÍDUOS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('pernil-residuos', -1)">−</button>
+                        <div class="counter-display" id="pernil-residuos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('pernil-residuos', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">PELOS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('pernil-pelos', -1)">−</button>
+                        <div class="counter-display" id="pernil-pelos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('pernil-pelos', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">HEMATOMAS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('pernil-hematomas', -1)">−</button>
+                        <div class="counter-display" id="pernil-hematomas">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('pernil-hematomas', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">MELADO</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('pernil-melado', -1)">−</button>
+                        <div class="counter-display" id="pernil-melado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('pernil-melado', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">SUJEIRA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('pernil-sujeira', -1)">−</button>
+                        <div class="counter-display" id="pernil-sujeira">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('pernil-sujeira', 1)">+</button>
+                    </div>
+                </div>
+                    <div class="item">
+                        <span class="item-name">MAL TOALETE</span>
+                        <div class="counter-controls">
+                            <button class="counter-btn btn-minus" onclick="updateCounter('pernil-mal-toalete', -1)">−</button>
+                            <div class="counter-display" id="pernil-mal-toalete">0</div>
+                            <button class="counter-btn btn-plus" onclick="updateCounter('pernil-mal-toalete', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <span class="item-name">ADERENCIA</span>
+                        <div class="counter-controls">
+                            <button class="counter-btn btn-minus" onclick="updateCounter('pernil-aderencia', -1)">−</button>
+                            <div class="counter-display" id="pernil-aderencia">0</div>
+                            <button class="counter-btn btn-plus" onclick="updateCounter('pernil-aderencia', 1)">+</button>
+                        </div>
+                    </div>
+            </div>
+
+            <!-- PALETA -->
+            <div class="section">
+                <div class="section-header laranja">PALETA</div>
+                <div class="item">
+                    <span class="item-name">DANIFICADO</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-danificado', -1)">−</button>
+                        <div class="counter-display" id="paleta-danificado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-danificado', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">FRATURA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-fratura', -1)">−</button>
+                        <div class="counter-display" id="paleta-fratura">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-fratura', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">RESÍDUOS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-residuos', -1)">−</button>
+                        <div class="counter-display" id="paleta-residuos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-residuos', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">PELOS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-pelos', -1)">−</button>
+                        <div class="counter-display" id="paleta-pelos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-pelos', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">HEMATOMAS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-hematomas', -1)">−</button>
+                        <div class="counter-display" id="paleta-hematomas">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-hematomas', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">MELADO</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-melado', -1)">−</button>
+                        <div class="counter-display" id="paleta-melado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-melado', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">SUJEIRA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-sujeira', -1)">−</button>
+                        <div class="counter-display" id="paleta-sujeira">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-sujeira', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">MAL TOALETE</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-mal-toalete', -1)">−</button>
+                        <div class="counter-display" id="paleta-mal-toalete">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-mal-toalete', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">ADERENCIA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-aderencia', -1)">−</button>
+                        <div class="counter-display" id="paleta-aderencia">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-aderencia', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: none;"></div>
+
+            <!-- CARRE -->
+            <div class="section">
+                <div class="section-header verde">CARRÉ</div>
+                <div class="item">
+                    <span class="item-name">DANIFICADO</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carre-danificado', -1)">−</button>
+                        <div class="counter-display" id="carre-danificado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carre-danificado', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">FRATURA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carre-fratura', -1)">−</button>
+                        <div class="counter-display" id="carre-fratura">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carre-fratura', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">RESÍDUOS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carre-residuos', -1)">−</button>
+                        <div class="counter-display" id="carre-residuos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carre-residuos', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">PELOS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carre-pelos', -1)">−</button>
+                        <div class="counter-display" id="carre-pelos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carre-pelos', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">HEMATOMAS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carre-hematomas', -1)">−</button>
+                        <div class="counter-display" id="carre-hematomas">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carre-hematomas', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">MELADO</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carre-melado', -1)">−</button>
+                        <div class="counter-display" id="carre-melado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carre-melado', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">SUJEIRA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carre-sujeira', -1)">−</button>
+                        <div class="counter-display" id="carre-sujeira">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carre-sujeira', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">MAL TOALETE</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carre-mal-toalete', -1)">−</button>
+                        <div class="counter-display" id="carre-mal-toalete">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carre-mal-toalete', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">ADERENCIA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('carre-aderencia', -1)">−</button>
+                        <div class="counter-display" id="carre-aderencia">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('carre-aderencia', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BARRIGA -->
+            <div class="section">
+                <div class="section-header amarelo-claro">BARRIGA</div>
+                <div class="item">
+                    <span class="item-name">DANIFICADO</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-danificado', -1)">−</button>
+                        <div class="counter-display" id="barriga-danificado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-danificado', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">FRATURA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-fratura', -1)">−</button>
+                        <div class="counter-display" id="barriga-fratura">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-fratura', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">RESÍDUOS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-residuos', -1)">−</button>
+                        <div class="counter-display" id="barriga-residuos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-residuos', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">PELOS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-pelos', -1)">−</button>
+                        <div class="counter-display" id="barriga-pelos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-pelos', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">HEMATOMAS</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-hematomas', -1)">−</button>
+                        <div class="counter-display" id="barriga-hematomas">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-hematomas', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">MELADO</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-melado', -1)">−</button>
+                        <div class="counter-display" id="barriga-melado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-melado', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">SUJEIRA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-sujeira', -1)">−</button>
+                        <div class="counter-display" id="barriga-sujeira">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-sujeira', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">MAL TOALETE</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-mal-toalete', -1)">−</button>
+                        <div class="counter-display" id="barriga-mal-toalete">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-mal-toalete', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span class="item-name">ADERENCIA</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-aderencia', -1)">−</button>
+                        <div class="counter-display" id="barriga-aderencia">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-aderencia', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Resumo da Contagem</div>
+            <div id="modal-body"></div>
+            <div style="margin-top: 20px;">
+                <label for="responsavel" style="font-weight: bold; color: #2c3e50;">Nome do Responsável:</label>
+                <input type="text" id="responsavel" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; margin-top: 5px;">
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn btn-close" onclick="fecharModal()">Fechar</button>
+                <button class="modal-btn btn-reset" onclick="resetarContagem()">Resetar Tudo</button>
+                <button class="modal-btn" style="background: #3498db; color: white;" onclick="gerarRelatorio()">Gerar Relatório</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ... (código existente)
+
+        // Gerar Relatório
+        function gerarRelatorio() {
+            const responsavelInput = document.getElementById('responsavel');
+            const responsavel = responsavelInput.value.trim();
+
+            if (!responsavel) {
+                alert('Por favor, preencha o nome do responsável.');
+                responsavelInput.focus();
+                return;
+            }
+
+            const counters = document.querySelectorAll('.counter-display');
+            const data = [];
+            
+            counters.forEach(counter => {
+                const value = parseInt(counter.textContent);
+                if (value > 0) {
+                    const labelElement = counter.closest('.item').querySelector('.item-name');
+                    const sectionElement = counter.closest('.section').querySelector('.section-header');
+                    let label = '';
+
+                    if (sectionElement.textContent.includes('CARCAÇA') || sectionElement.textContent.includes('PÉ')) {
+                        label = sectionElement.textContent.trim();
+                    } else {
+                        label = `${sectionElement.textContent.trim()} - ${labelElement.textContent.trim()}`;
+                    }
+                    
+                    data.push({
+                        label: label,
+                        value: value
+                    });
+                }
+            });
+
+            if (data.length === 0) {
+                alert('Nenhuma não conformidade registrada para gerar o relatório.');
+                return;
+            }
+
+            const payload = {
+                counts: data,
+                responsible: responsavel
+            };
+
+            fetch('/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert(result.message);
+                if(result.status === 'success') {
+                    fecharModal();
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao gerar PDF:', error);
+                alert('Ocorreu um erro ao tentar gerar o relatório.');
+            });
+        }
+
+        // Atualiza contador
+        function updateCounter(id, delta) {
+            const element = document.getElementById(id);
+            let currentValue = parseInt(element.textContent);
+            let newValue = currentValue + delta;
+            
+            // Não permite valores negativos
+            if (newValue < 0) newValue = 0;
+            
+            element.textContent = newValue;
+            
+            // Salva no localStorage
+            saveData();
+        }
+
+        // Salva dados no localStorage
+        function saveData() {
+            const counters = document.querySelectorAll('.counter-display');
+            const data = {};
+            
+            counters.forEach(counter => {
+                data[counter.id] = counter.textContent;
+            });
+            
+            localStorage.setItem('contagemData', JSON.stringify(data));
+        }
+
+        // Carrega dados do localStorage
+        function loadData() {
+            const savedData = localStorage.getItem('contagemData');
+            
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                
+                Object.keys(data).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.textContent = data[key];
+                    }
+                });
+            }
+        }
+
+        // Finalizar contagem
+        function finalizarContagem() {
+            const counters = document.querySelectorAll('.counter-display');
+            let html = '';
+            let total = 0;
+            
+            const labels = {
+                'carcaca': 'Carcaça Não Conforme',
+                'pe': 'Pé Não Conforme',
+                'pernil-danificado': 'Pernil - Danificado',
+                'pernil-fratura': 'Pernil - Fratura',
+                'pernil-residuos': 'Pernil - Resíduos',
+                'pernil-pelos': 'Pernil - Pelos',
+                'pernil-hematomas': 'Pernil - Hematomas',
+                'pernil-melado': 'Pernil - Melado',
+                'pernil-sujeira': 'Pernil - Sujeira',
+                'pernil-mal-toalete': 'Pernil - Mal Toalete',
+                'pernil-aderencia': 'Pernil - Aderência',
+                'paleta-danificado': 'Paleta - Danificado',
+                'paleta-fratura': 'Paleta - Fratura',
+                'paleta-residuos': 'Paleta - Resíduos',
+                'paleta-pelos': 'Paleta - Pelos',
+                'paleta-hematomas': 'Paleta - Hematomas',
+                'paleta-melado': 'Paleta - Melado',
+                'paleta-sujeira': 'Paleta - Sujeira',
+                'paleta-mal-toalete': 'Paleta - Mal Toalete',
+                'paleta-aderencia': 'Paleta - Aderência',
+                'carre-danificado': 'Carré - Danificado',
+                'carre-fratura': 'Carré - Fratura',
+                'carre-residuos': 'Carré - Resíduos',
+                'carre-pelos': 'Carré - Pelos',
+                'carre-hematomas': 'Carré - Hematomas',
+                'carre-melado': 'Carré - Melado',
+                'carre-sujeira': 'Carré - Sujeira',
+                'carre-mal-toalete': 'Carré - Mal Toalete',
+                'carre-aderencia': 'Carré - Aderência',
+                'barriga-danificado': 'Barriga - Danificado',
+                'barriga-fratura': 'Barriga - Fratura',
+                'barriga-residuos': 'Barriga - Resíduos',
+                'barriga-pelos': 'Barriga - Pelos',
+                'barriga-hematomas': 'Barriga - Hematomas',
+                'barriga-melado': 'Barriga - Melado',
+                'barriga-sujeira': 'Barriga - Sujeira',
+                'barriga-mal-toalete': 'Barriga - Mal Toalete',
+                'barriga-aderencia': 'Barriga - Aderência'
+            };
+            
+            counters.forEach(counter => {
+                if (!counter.id) return; // Pula se o contador não tiver ID
+                const value = parseInt(counter.textContent);
+                if (value > 0) {
+                    html += `<div class="modal-item">
+                        <strong>${labels[counter.id] || counter.id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>
+                        <span>${value}</span>
+                    </div>`;
+                    total += value;
+                }
+            });
+            
+            if (total === 0) {
+                html = '<div class="modal-item"><p style="text-align: center; color: #7f8c8d;">Nenhuma não conformidade registrada</p></div>';
+            } else {
+                html += `<div class="modal-item" style="background: #ecf0f1; margin-top: 10px; padding: 15px; border-radius: 8px;">
+                    <strong style="font-size: 18px;">TOTAL:</strong>
+                    <strong style="font-size: 18px; color: #e74c3c;">${total}</strong>
+                </div>`;
+            }
+            
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Resetar contagem
+        function resetarContagem() {
+            if (confirm('Tem certeza que deseja resetar todas as contagens?')) {
+                const counters = document.querySelectorAll('.counter-display');
+                counters.forEach(counter => {
+                    counter.textContent = '0';
+                });
+                saveData();
+                fecharModal();
+            }
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                fecharModal();
+            }
+        }
+
+        // Carrega dados ao iniciar
+        window.onload = loadData;
+    </script>
+</body>
+</html>
