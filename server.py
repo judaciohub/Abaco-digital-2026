@@ -75,8 +75,8 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         # Agrupar dados
         grouped_data = {
-            'CARCAÇA NÃO CONFORME': {}, 'PÉ NÃO CONFORME': {},
-            'PERNIL': {}, 'PALETA': {}, 'CARRÉ': {}, 'BARRIGA': {}
+            'CARCAÇA NÃO CONFORME': {}, 'LOTE': {},
+            'PERNIL': {}, 'BARRIGA': {}, 'CARRÉ': {}, 'PALETA': {}
         }
         
         total_geral = 0
@@ -89,8 +89,8 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             
             if 'CARCAÇA' in label:
                 grouped_data['CARCAÇA NÃO CONFORME'][label] = value
-            elif 'PÉ' in label:
-                grouped_data['PÉ NÃO CONFORME'][label] = value
+            elif 'CABEÇA' in label:
+                grouped_data['LOTE'][label] = value
             else:
                 category, _, sub_item = label.partition(' - ')
                 if category in grouped_data:
@@ -107,9 +107,11 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             total_carcaca = sum(grouped_data['CARCAÇA NÃO CONFORME'].values())
             top_section_content.append(Paragraph(f"CARCAÇA NÃO CONFORME (TOTAL: {total_carcaca})", styles['SectionTitle']))
         
-        if grouped_data['PÉ NÃO CONFORME']:
-            total_pe = sum(grouped_data['PÉ NÃO CONFORME'].values())
-            top_section_content.append(Paragraph(f"PÉ NÃO CONFORME (TOTAL: {total_pe})", styles['SectionTitle']))
+        if grouped_data['LOTE']:
+            total_pe = sum(grouped_data['LOTE'].values())
+            lote_numero = data.get('lote_numero', '')
+            titulo_lote = f"LOTE {lote_numero} (TOTAL: {total_pe})" if lote_numero else f"LOTE (TOTAL: {total_pe})"
+            top_section_content.append(Paragraph(titulo_lote, styles['SectionTitle']))
 
         if top_section_content:
             t_top = Table([top_section_content], colWidths=[3.25*inch, 3.25*inch])
@@ -117,8 +119,8 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             elements.append(t_top)
             elements.append(Spacer(1, 15))
 
-        # Seções principais (Pernil, Paleta, etc.)
-        main_sections = ['PERNIL', 'PALETA', 'CARRÉ', 'BARRIGA']
+        # Seções principais (Pernil, Barriga, etc.)
+        main_sections = ['PERNIL', 'BARRIGA', 'CARRÉ', 'PALETA']
         col_data = [[], []] 
         
         for i, section_name in enumerate(main_sections):

@@ -143,6 +143,22 @@
             text-align: center;
         }
 
+        .lote-input {
+            padding: 8px 12px;
+            border: 2px solid #95a5a6;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 150px;
+            text-align: center;
+            background: white;
+            color: #2c3e50;
+        }
+
+        .lote-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
         @media (max-width: 768px) {
             .main-grid, .top-section {
                 grid-template-columns: 1fr;
@@ -236,10 +252,11 @@
             </div>
 
             <div class="section">
-                <div class="section-header cinza">PÉ NÃO CONFORME</div>
+                <div class="section-header cinza">LOTE</div>
                 <div class="item">
                     <span class="item-name">Total</span>
                     <div class="counter-controls">
+                        <input type="text" class="lote-input" id="lote-numero" placeholder="Nº ou Nome">
                         <button class="counter-btn btn-minus" onclick="updateCounter('pe', -1)">−</button>
                         <div class="counter-display" id="pe">0</div>
                         <button class="counter-btn btn-plus" onclick="updateCounter('pe', 1)">+</button>
@@ -326,79 +343,79 @@
                     </div>
             </div>
 
-            <!-- PALETA -->
+            <!-- BARRIGA -->
             <div class="section">
-                <div class="section-header laranja">PALETA</div>
+                <div class="section-header amarelo-claro">BARRIGA</div>
                 <div class="item">
                     <span class="item-name">DANIFICADO</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-danificado', -1)">−</button>
-                        <div class="counter-display" id="paleta-danificado">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-danificado', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-danificado', -1)">−</button>
+                        <div class="counter-display" id="barriga-danificado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-danificado', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">FRATURA</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-fratura', -1)">−</button>
-                        <div class="counter-display" id="paleta-fratura">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-fratura', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-fratura', -1)">−</button>
+                        <div class="counter-display" id="barriga-fratura">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-fratura', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">RESÍDUOS</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-residuos', -1)">−</button>
-                        <div class="counter-display" id="paleta-residuos">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-residuos', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-residuos', -1)">−</button>
+                        <div class="counter-display" id="barriga-residuos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-residuos', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">PELOS</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-pelos', -1)">−</button>
-                        <div class="counter-display" id="paleta-pelos">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-pelos', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-pelos', -1)">−</button>
+                        <div class="counter-display" id="barriga-pelos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-pelos', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">HEMATOMAS</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-hematomas', -1)">−</button>
-                        <div class="counter-display" id="paleta-hematomas">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-hematomas', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-hematomas', -1)">−</button>
+                        <div class="counter-display" id="barriga-hematomas">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-hematomas', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">MELADO</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-melado', -1)">−</button>
-                        <div class="counter-display" id="paleta-melado">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-melado', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-melado', -1)">−</button>
+                        <div class="counter-display" id="barriga-melado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-melado', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">SUJEIRA</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-sujeira', -1)">−</button>
-                        <div class="counter-display" id="paleta-sujeira">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-sujeira', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-sujeira', -1)">−</button>
+                        <div class="counter-display" id="barriga-sujeira">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-sujeira', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">MAL TOALETE</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-mal-toalete', -1)">−</button>
-                        <div class="counter-display" id="paleta-mal-toalete">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-mal-toalete', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-mal-toalete', -1)">−</button>
+                        <div class="counter-display" id="barriga-mal-toalete">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-mal-toalete', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">ADERENCIA</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-aderencia', -1)">−</button>
-                        <div class="counter-display" id="paleta-aderencia">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-aderencia', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-aderencia', -1)">−</button>
+                        <div class="counter-display" id="barriga-aderencia">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-aderencia', 1)">+</button>
                     </div>
                 </div>
             </div>
@@ -482,79 +499,79 @@
                 </div>
             </div>
 
-            <!-- BARRIGA -->
+            <!-- PALETA -->
             <div class="section">
-                <div class="section-header amarelo-claro">BARRIGA</div>
+                <div class="section-header laranja">PALETA</div>
                 <div class="item">
                     <span class="item-name">DANIFICADO</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-danificado', -1)">−</button>
-                        <div class="counter-display" id="barriga-danificado">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-danificado', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-danificado', -1)">−</button>
+                        <div class="counter-display" id="paleta-danificado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-danificado', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">FRATURA</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-fratura', -1)">−</button>
-                        <div class="counter-display" id="barriga-fratura">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-fratura', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-fratura', -1)">−</button>
+                        <div class="counter-display" id="paleta-fratura">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-fratura', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">RESÍDUOS</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-residuos', -1)">−</button>
-                        <div class="counter-display" id="barriga-residuos">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-residuos', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-residuos', -1)">−</button>
+                        <div class="counter-display" id="paleta-residuos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-residuos', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">PELOS</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-pelos', -1)">−</button>
-                        <div class="counter-display" id="barriga-pelos">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-pelos', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-pelos', -1)">−</button>
+                        <div class="counter-display" id="paleta-pelos">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-pelos', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">HEMATOMAS</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-hematomas', -1)">−</button>
-                        <div class="counter-display" id="barriga-hematomas">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-hematomas', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-hematomas', -1)">−</button>
+                        <div class="counter-display" id="paleta-hematomas">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-hematomas', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">MELADO</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-melado', -1)">−</button>
-                        <div class="counter-display" id="barriga-melado">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-melado', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-melado', -1)">−</button>
+                        <div class="counter-display" id="paleta-melado">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-melado', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">SUJEIRA</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-sujeira', -1)">−</button>
-                        <div class="counter-display" id="barriga-sujeira">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-sujeira', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-sujeira', -1)">−</button>
+                        <div class="counter-display" id="paleta-sujeira">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-sujeira', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">MAL TOALETE</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-mal-toalete', -1)">−</button>
-                        <div class="counter-display" id="barriga-mal-toalete">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-mal-toalete', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-mal-toalete', -1)">−</button>
+                        <div class="counter-display" id="paleta-mal-toalete">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-mal-toalete', 1)">+</button>
                     </div>
                 </div>
                 <div class="item">
                     <span class="item-name">ADERENCIA</span>
                     <div class="counter-controls">
-                        <button class="counter-btn btn-minus" onclick="updateCounter('barriga-aderencia', -1)">−</button>
-                        <div class="counter-display" id="barriga-aderencia">0</div>
-                        <button class="counter-btn btn-plus" onclick="updateCounter('barriga-aderencia', 1)">+</button>
+                        <button class="counter-btn btn-minus" onclick="updateCounter('paleta-aderencia', -1)">−</button>
+                        <div class="counter-display" id="paleta-aderencia">0</div>
+                        <button class="counter-btn btn-plus" onclick="updateCounter('paleta-aderencia', 1)">+</button>
                     </div>
                 </div>
             </div>
@@ -593,13 +610,14 @@
             }
 
             // Coletar dados organizados por categoria
+            const loteNumero = document.getElementById('lote-numero').value.trim();
             const categorias = {
                 carcaca: { total: 0, items: [] },
-                pe: { total: 0, items: [] },
+                pe: { total: 0, items: [], lote: loteNumero },
                 pernil: { total: 0, items: [] },
-                paleta: { total: 0, items: [] },
+                barriga: { total: 0, items: [] },
                 carre: { total: 0, items: [] },
-                barriga: { total: 0, items: [] }
+                paleta: { total: 0, items: [] }
             };
 
             const counters = document.querySelectorAll('.counter-display');
@@ -757,25 +775,12 @@
                 }
                 
                 // COLUNA DIREITA
-                // PÉ NÃO CONFORME
+                // LOTE
                 if (categorias.pe.total > 0) {
                     doc.setFont(undefined, 'bold');
-                    doc.text(`PE NAO CONFORME (TOTAL: ${categorias.pe.total})`, colDireita, yDir);
+                    const loteTexto = categorias.pe.lote ? `LOTE ${categorias.pe.lote} (TOTAL: ${categorias.pe.total})` : `LOTE (TOTAL: ${categorias.pe.total})`;
+                    doc.text(loteTexto, colDireita, yDir);
                     yDir += 7;
-                }
-                
-                // PALETA
-                if (categorias.paleta.total > 0) {
-                    doc.setFont(undefined, 'bold');
-                    doc.text(`PALETA (TOTAL: ${categorias.paleta.total})`, colDireita, yDir);
-                    yDir += 6;
-                    
-                    doc.setFont(undefined, 'normal');
-                    categorias.paleta.items.forEach(item => {
-                        doc.text(`${item.label}: ${item.value}`, colDireita + 5, yDir);
-                        yDir += 5;
-                    });
-                    yDir += 3;
                 }
                 
                 // BARRIGA
@@ -786,6 +791,20 @@
                     
                     doc.setFont(undefined, 'normal');
                     categorias.barriga.items.forEach(item => {
+                        doc.text(`${item.label}: ${item.value}`, colDireita + 5, yDir);
+                        yDir += 5;
+                    });
+                    yDir += 3;
+                }
+                
+                // PALETA
+                if (categorias.paleta.total > 0) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`PALETA (TOTAL: ${categorias.paleta.total})`, colDireita, yDir);
+                    yDir += 6;
+                    
+                    doc.setFont(undefined, 'normal');
+                    categorias.paleta.items.forEach(item => {
                         doc.text(`${item.label}: ${item.value}`, colDireita + 5, yDir);
                         yDir += 5;
                     });
@@ -874,7 +893,7 @@
             
             const labels = {
                 'carcaca': 'Carcaça Não Conforme',
-                'pe': 'Pé Não Conforme',
+                'pe': 'Lote',
                 'pernil-danificado': 'Pernil - Danificado',
                 'pernil-fratura': 'Pernil - Fratura',
                 'pernil-residuos': 'Pernil - Resíduos',

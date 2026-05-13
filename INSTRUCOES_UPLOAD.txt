@@ -1,0 +1,85 @@
+# 📤 INSTRUÇÕES PARA UPLOAD NO GITHUB
+
+## Arquivos para Fazer Upload
+
+### ✅ Arquivos que DEVEM ser enviados:
+1. **index.html** - Interface principal (MODIFICADO)
+2. **server.py** - Servidor Python (MODIFICADO)
+3. **README.md** - Documentação do projeto (NOVO)
+4. **CHANGELOG.md** - Histórico de alterações (NOVO)
+5. **.gitignore** - Configuração Git (manter existente)
+6. **img/** - Pasta de imagens (se houver)
+
+### ❌ Arquivos que NÃO devem ser enviados:
+- **.venv/** - Ambiente virtual (já está no .gitignore)
+- **relatorio_*.pdf** - Arquivos PDF gerados
+- **__pycache__/** - Cache do Python
+
+---
+
+## 🌐 Passo a Passo - Upload Manual
+
+### 1️⃣ Acesse seu repositório no GitHub
+   - Vá para: https://github.com/[seu-usuario]/[seu-repositorio]
+
+### 2️⃣ Clique em "Add file" → "Upload files"
+   - Ou arraste os arquivos diretamente para a página
+
+### 3️⃣ Selecione os arquivos
+   Arraste estes arquivos da pasta:
+   ```
+   C:\Users\SUPORTE TI\Documents\Aplicativos\abaco 2026
+   ```
+   
+   - ✅ index.html
+   - ✅ server.py
+   - ✅ README.md
+   - ✅ CHANGELOG.md
+   - ✅ .gitignore
+
+### 4️⃣ Escreva a mensagem de commit
+   ```
+   Atualização v28/04/2026
+   
+   - Renomeado CABEÇA VIVA para LOTE
+   - Adicionado campo para número/nome do lote
+   - Invertida ordem de PALETA e BARRIGA
+   - Adicionada documentação (README e CHANGELOG)
+   ```
+
+### 5️⃣ Escolha a branch
+   - Se for atualização: selecione "Commit directly to the main branch"
+   - Se quiser revisar: selecione "Create a new branch"
+
+### 6️⃣ Clique em "Commit changes"
+
+---
+
+## ✅ Verificação
+
+Após o upload, verifique se os seguintes arquivos aparecem no repositório:
+- [ ] index.html (atualizado)
+- [ ] server.py (atualizado)
+- [ ] README.md (novo)
+- [ ] CHANGELOG.md (novo)
+- [ ] .gitignore (mantido)
+
+---
+
+## 🔄 Alternativa: GitHub Desktop
+
+Se preferir usar o GitHub Desktop:
+
+1. Abra o GitHub Desktop
+2. Clique em "File" → "Add Local Repository"
+3. Selecione a pasta: `C:\Users\SUPORTE TI\Documents\Aplicativos\abaco 2026`
+4. Na aba "Changes", revise as alterações
+5. Escreva a mensagem de commit no campo inferior
+6. Clique em "Commit to main"
+7. Clique em "Push origin" para enviar ao GitHub
+
+---
+
+## 📞 Suporte
+
+Qualquer dúvida, consulte: https://docs.github.com/pt/repositories/working-with-files/managing-files/adding-a-file-to-a-repository
